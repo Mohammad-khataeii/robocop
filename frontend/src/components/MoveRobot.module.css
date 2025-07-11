@@ -1,0 +1,10 @@
+.container {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.formGroup {
+  margin-bottom: 5px;
+}
