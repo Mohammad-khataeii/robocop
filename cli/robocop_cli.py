@@ -14,24 +14,38 @@ def run_roscore():
     except FileNotFoundError:
         print("❌ ERROR: 'roscore' not found. Ensure ROS is installed and sourced.")
 
-def run_ur3e_bringup():
-    """Launch UR3e bringup with user-specified IP and calibration file."""
+def run_robot_bringup():
+    """Select robot type and launch its bringup."""
+    robot_options = ['ur3e', 'ur5e', 'ur10e']
+    print("\n👉 Available Universal Robots:")
+    for idx, robot in enumerate(robot_options, 1):
+        print(f"{idx}. {robot}")
+
+    while True:
+        choice = input("👉 Select robot by number: ").strip()
+        if choice.isdigit() and 1 <= int(choice) <= len(robot_options):
+            robot_name = robot_options[int(choice) - 1]
+            break
+        else:
+            print("❌ Invalid selection. Please enter a valid number.")
+
     robot_ip = input("👉 Enter the robot IP (e.g., 192.168.0.10): ").strip()
     if not robot_ip:
         print("❌ No IP provided. Skipping bringup.")
         return
 
-    # Find available calibration files
+    # Find calibration files in ~/catkin_ws/src/<robot_name>_description/
     home_dir = os.path.expanduser("~")
-    catkin_ws = os.path.join(home_dir, "catkin_ws")
-    if not os.path.isdir(catkin_ws):
-        print(f"❌ catkin_ws directory not found at {catkin_ws}")
+    calib_dir = os.path.join(home_dir, "catkin_ws", "src", f"{robot_name}_description")
+
+    if not os.path.isdir(calib_dir):
+        print(f"❌ Directory not found: {calib_dir}")
         return
 
-    files = [f for f in os.listdir(catkin_ws) if f.endswith("_robot_calibration.yaml")]
+    files = [f for f in os.listdir(calib_dir) if f.endswith("_robot_calibration.yaml")]
 
     if not files:
-        print("❌ No calibration files found in catkin_ws!")
+        print(f"❌ No calibration files found in {calib_dir}!")
         return
 
     print("\nAvailable calibration files:")
@@ -39,20 +53,20 @@ def run_ur3e_bringup():
         print(f"{idx}. {f}")
 
     while True:
-        choice = input("👉 Select calibration file by number: ").strip()
-        if choice.isdigit() and 1 <= int(choice) <= len(files):
-            calibration_file = os.path.join(catkin_ws, files[int(choice) - 1])
+        file_choice = input("👉 Select calibration file by number: ").strip()
+        if file_choice.isdigit() and 1 <= int(file_choice) <= len(files):
+            calibration_file = os.path.join(calib_dir, files[int(file_choice) - 1])
             break
         else:
             print("❌ Invalid selection. Please enter a valid number.")
 
     try:
         subprocess.Popen([
-            'roslaunch', 'ur_robot_driver', 'ur3e_bringup.launch',
+            'roslaunch', 'ur_robot_driver', f'{robot_name}_bringup.launch',
             f'robot_ip:={robot_ip}',
             f'kinematics_config:={calibration_file}'
         ])
-        print(f"✅ UR3e bringup started with robot_ip: {robot_ip} and calibration file: {calibration_file}")
+        print(f"✅ {robot_name.upper()} bringup started with robot_ip: {robot_ip} and calibration file: {calibration_file}")
     except FileNotFoundError:
         print("❌ ERROR: 'roslaunch' or 'ur_robot_driver' not found. Ensure ROS is sourced and installed.")
 
@@ -92,10 +106,10 @@ def main():
             if platform.system() == 'Linux':
                 print("🚀 Starting roscore...")
                 run_roscore()
-                print("🚀 Starting UR3e bringup...")
-                run_ur3e_bringup()
+                print("🚀 Starting Universal Robot bringup...")
+                run_robot_bringup()
             else:
-                print("⚠️  ROS integration is disabled on Windows. Skipping roscore and UR3e bringup.")
+                print("⚠️  ROS integration is disabled on Windows. Skipping roscore and robot bringup.")
 
         print("🚀 Starting RoboCop backend...")
         run_backend()

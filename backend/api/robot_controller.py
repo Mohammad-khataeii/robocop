@@ -58,7 +58,7 @@ def emergency_stop():
 def get_status():
     return {
         "connected": ROS_AVAILABLE,
-        "status": "idle",  # ✅ add 'status' key for the test to pass
+        "status": "idle",  
         "mode": "mock" if not ROS_AVAILABLE else "live",
         "error": None
     }

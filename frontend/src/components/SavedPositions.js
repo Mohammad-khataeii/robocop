@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Heading,
+  Text,
+  List,
+  ListItem,
+  Alert,
+  AlertIcon,
+} from '@chakra-ui/react';
 import api from '../services/api';
-import styles from './SavedPositions.module.css';
 
 const SavedPositions = () => {
   const [positions, setPositions] = useState([]);
@@ -8,30 +16,35 @@ const SavedPositions = () => {
 
   useEffect(() => {
     api.getSavedPositions()
-      .then(res => {
+      .then((res) => {
         const data = res.data.positions || {};
-        const formatted = Object.entries(data).map(([name, joints]) => ({ name, joints }));
+        const formatted = Object.entries(data).map(([name, joints]) => ({
+          name,
+          joints,
+        }));
         setPositions(formatted);
       })
-      .catch(err => setError('Failed to fetch saved positions'));
+      .catch(() => setError('Failed to fetch saved positions'));
   }, []);
 
   return (
-    <div className={styles.container}>
-      <h2>💾 Saved Positions</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <ul>
-        {positions.length === 0 ? (
-          <li>No saved positions found.</li>
-        ) : (
-          positions.map((pos, idx) => (
-            <li key={idx}>
+    <Box p={4} bg="white" _dark={{ bg: 'gray.700' }} rounded="lg" shadow="md">
+      <Heading size="md" mb={4}>💾 Saved Positions</Heading>
+
+      {error && <Alert status="error" mb={4}><AlertIcon />{error}</Alert>}
+
+      {positions.length === 0 ? (
+        <Text color="gray.500" _dark={{ color: 'gray.300' }}>No saved positions found.</Text>
+      ) : (
+        <List spacing={2}>
+          {positions.map((pos, idx) => (
+            <ListItem key={idx} fontSize="sm">
               <strong>{pos.name}</strong>: {pos.joints.join(', ')}
-            </li>
-          ))
-        )}
-      </ul>
-    </div>
+            </ListItem>
+          ))}
+        </List>
+      )}
+    </Box>
   );
 };
 
