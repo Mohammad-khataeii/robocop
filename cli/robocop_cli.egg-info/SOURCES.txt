@@ -1,0 +1,7 @@
+robocop_cli.py
+setup.py
+robocop_cli.egg-info/PKG-INFO
+robocop_cli.egg-info/SOURCES.txt
+robocop_cli.egg-info/dependency_links.txt
+robocop_cli.egg-info/entry_points.txt
+robocop_cli.egg-info/top_level.txt
