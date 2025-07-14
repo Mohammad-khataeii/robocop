@@ -1,60 +1,97 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
+import { Box, useColorModeValue } from '@chakra-ui/react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Html } from '@react-three/drei';
+import { OrbitControls, useGLTF } from '@react-three/drei';
+import api from '../services/api';
 
-// Define distinct colors for each joint
-const jointColors = ['orange', 'red', 'green', 'blue', 'purple', 'cyan'];
+const jointNames = [
+  'Shoulder_7',
+  'Elbow_6',
+  'Wrist01_5',
+  'Wrist02_4',
+  'Wrist03_3',
+];
 
-// Joint component with color + label
-const Joint = ({ index, rotation }) => {
-  const ref = useRef();
+const jointConfigs = [
+  { axis: 'z' },
+  { axis: 'y' },
+  { axis: 'y' },
+  { axis: 'x' },
+  { axis: 'y' },
+];
 
-  useFrame(() => {
-    if (ref.current) {
-      ref.current.rotation.z = rotation[index]; // adjust axis if needed
-    }
+const RobotModel = ({ jointPositions }) => {
+  const { scene, nodes } = useGLTF('/models/ur3e1.glb');
+  const currentRotations = useRef(jointNames.map(() => 0));
+
+  useEffect(() => {
+    console.log('🛠 Loaded GLB nodes:', Object.keys(nodes));
+  }, [nodes]);
+
+  const orderedRotations = useMemo(
+    () => jointNames.map((name) => jointPositions[name] || 0),
+    [jointPositions]
+  );
+
+  useFrame((state, delta) => {
+    jointNames.forEach((joint, idx) => {
+      const node = nodes[joint];
+      if (node) {
+        const axis = jointConfigs[idx].axis;
+        const target = orderedRotations[idx];
+        const current = currentRotations.current[idx];
+        const lerped = current + (target - current) * Math.min(10 * delta, 1);
+        currentRotations.current[idx] = lerped;
+        node.rotation[axis] = lerped;
+      }
+    });
   });
 
-  return (
-    <group ref={ref} position={[0, index * 1.2, 0]}>
-      <mesh>
-        <cylinderGeometry args={[0.1, 0.1, 1, 32]} />
-        <meshStandardMaterial color={jointColors[index % jointColors.length]} />
-      </mesh>
-      <Html
-        position={[0.3, 0.5, 0]}
-        style={{
-          background: 'rgba(255,255,255,0.85)',
-          padding: '2px 6px',
-          borderRadius: '4px',
-          fontSize: '10px',
-          color: '#333',
-          boxShadow: '0 0 2px rgba(0,0,0,0.5)',
-        }}
-      >
-        Joint {index + 1}
-      </Html>
-    </group>
-  );
+  return <primitive object={scene} scale={1.0} />;
 };
 
-// Full robot arm group
-const RobotArm = ({ jointPositions }) => (
-  <group>
-    {[...Array(6)].map((_, idx) => (
-      <Joint key={idx} index={idx} rotation={jointPositions} />
-    ))}
-  </group>
-);
+const RobotViewer = () => {
+  const [jointPositions, setJointPositions] = useState({});
 
-const RobotViewer = ({ jointPositions }) => {
+  const bgColor = useColorModeValue('gray.100', 'gray.700');
+  const borderColor = useColorModeValue('gray.200', 'gray.600');
+
+  const fetchStatus = () => {
+    api
+      .getRobotStatus()
+      .then((res) => {
+        setJointPositions(res.data.current_position || {});
+      })
+      .catch((err) => console.error('❌ Failed to fetch robot status', err));
+  };
+
+  useEffect(() => {
+    fetchStatus();
+    const interval = setInterval(() => {
+      fetchStatus();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <Canvas style={{ height: '400px', width: '100%', borderRadius: '8px' }}>
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 10, 5]} intensity={1} />
-      <RobotArm jointPositions={jointPositions} />
-      <OrbitControls />
-    </Canvas>
+    <Box
+      p={{ base: 2, md: 4 }}
+      bg={bgColor}
+      border="1px solid"
+      borderColor={borderColor}
+      borderRadius={{ base: 'md', md: 'lg' }}
+      boxShadow="md"
+      w={{ base: '100%', md: '100%' }}
+      h={{ base: '300px', md: '500px' }}
+      overflow="hidden"
+    >
+      <Canvas style={{ width: '100%', height: '100%' }}>
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[5, 10, 5]} intensity={1} />
+        <RobotModel jointPositions={jointPositions} />
+        <OrbitControls />
+      </Canvas>
+    </Box>
   );
 };
 
