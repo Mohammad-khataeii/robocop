@@ -113,7 +113,7 @@ const ProgramMovement = () => {
           duration: 1500,
           isClosable: true,
         });
-        await new Promise((resolve) => setTimeout(resolve, 6000)); // wait 6s
+        await new Promise((resolve) => setTimeout(resolve, 6000)); 
       } catch (error) {
         toast({
           title: 'Error',

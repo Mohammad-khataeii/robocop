@@ -37,8 +37,8 @@ const MoveRobot = () => {
     api.getRobotStatus()
       .then((res) => {
         const pos = res.data.current_position || [0, 0, 0, 0, 0, 0];
-        setPositions(pos.map((p) => p.toFixed(4)));  // set as string
-        setCurrentPositions(pos.map((p) => p.toFixed(4)));  // store for placeholder
+        setPositions(pos.map((p) => p.toFixed(4)));  
+        setCurrentPositions(pos.map((p) => p.toFixed(4)));  
       })
       .catch(() => {
         console.error('Failed to fetch robot status');

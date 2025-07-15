@@ -105,11 +105,24 @@ This will:
 
 ---
 
+✅ Alternative run without Cli (separately Frontend and backend):
+
+```bash
+cd frontend/
+npm start
+```
+
+```bash
+cd backend/
+python manage.py runserver
+```
+
 ## ⚠ Notes
 
 - On **Windows**, RoboCop runs in **mock mode** (no ROS), simulating joint updates.  
 - On **Linux**, RoboCop connects to ROS (`rospy`) and controls the real UR3/UR3e robot.  
 - ROS environment must be sourced before launching:
+- If yopu wish to control any other robots of Universal other tahn UR3/UR3e, you only need to simply call its bring-up.py. 
 
 ```bash
 source /opt/ros/noetic/setup.bash

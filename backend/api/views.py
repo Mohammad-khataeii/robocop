@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from . import robot_controller, position_manager
 
-# Optional: store current settings in-memory (can later move to DB)
+
 current_settings = {}
 
 @api_view(['GET'])
@@ -89,7 +89,7 @@ def settings_view(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Save settings (you can add validation or conversion here)
+        # Save settings 
         current_settings = data
 
         print("Received and saved settings:", current_settings)

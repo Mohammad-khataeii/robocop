@@ -9,16 +9,14 @@ except ImportError:
     print("⚠ ROS not available — running in MOCK MODE")
     ROS_AVAILABLE = False
 
-# ========================
-# Updated joint names to match GLB nodes
-# ========================
+
 joint_names = [
     'Shoulder_7',      # shoulder_pan_joint
     'Elbow_6',         # shoulder_lift_joint
     'Wrist01_5',       # elbow_joint
     'Wrist02_4',       # wrist_1_joint
     'Wrist03_3'        # wrist_2_joint
-    # Optional: 'EffectorJoint_2'  # wrist_3_joint, if you want to control it
+    # Optional: 'EffectorJoint_2'  # wrist_3_joint
 ]
 
 DEFAULT_POS = [0.0099, -2.6362, -1.0097, -1.0738, -1.6555]
@@ -63,7 +61,7 @@ def send_positions(positions, duration=5.0, speed_factor=1.0):
     global latest_joint_states
 
     if not ROS_AVAILABLE:
-        # ✅ MOCK MODE: simulate updating joint positions
+        # MOCK MODE: simulate updating joint positions
         for i, joint in enumerate(joint_names):
             latest_joint_states[joint] = positions[i]
         log_message(f"⚠ MOCK MODE: Updated mock joint states to {latest_joint_states}")

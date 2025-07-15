@@ -1,4 +1,4 @@
-# Placeholder — extend later for real ROS subscriber
+
 robot_status = {
     "connected": True,
     "mode": "idle",
