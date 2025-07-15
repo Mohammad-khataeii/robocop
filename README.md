@@ -122,7 +122,7 @@ python manage.py runserver
 - On **Windows**, RoboCop runs in **mock mode** (no ROS), simulating joint updates.  
 - On **Linux**, RoboCop connects to ROS (`rospy`) and controls the real UR3/UR3e robot.  
 - ROS environment must be sourced before launching:
-- If yopu wish to control any other robots of Universal other tahn UR3/UR3e, you only need to simply call its bring-up.py. 
+- If you wish to control any other robots of Universal other than UR3/UR3e, you only need to call its bring_up.py. 
 
 ```bash
 source /opt/ros/noetic/setup.bash
