@@ -131,6 +131,18 @@ source ~/catkin_ws/devel/setup.bash
 
 ---
 
+## 📸 Screenshots
+
+### 🚀 Move Robot Panel
+
+![Move Robot Panel](screenshots/MoveRobot.png)
+
+### 📋 Program Flow Panel
+
+![Program Flow Panel](screenshots/ProgramFlow.png)
+
+---
+
 ## 💡 Advanced Features
 
 ✅ Soft limits toggle (placeholder in settings)  
