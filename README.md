@@ -141,6 +141,14 @@ source ~/catkin_ws/devel/setup.bash
 
 ![Program Flow Panel](screenshots/ProgramFlow.png)
 
+### 📋 Setting Panel
+
+![Program Flow Panel](screenshots/Setting.png)
+
+### 📋 Save Positions Panel
+
+![Program Flow Panel](screenshots/SavedPositions.png)
+
 ---
 
 ## 💡 Advanced Features
